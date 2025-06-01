@@ -1,6 +1,6 @@
 
 # ICP: Immediate Compensation Pruning for Mid-to-High Sparsity
-[![CVPR 2025 Highlight](https://img.shields.io/badge/CVPR 2025-Highlight-ff69b4?style=flat-square&logo=googleacademic)](#)
+[![CVPR 2025 Highlight](https://img.shields.io/badge/CVPR%202025-Highlight-ff69b4?style=for-the-badge&logo=google-scholar&logoColor=white)](#)
 
 Official implementation for the paper **“ICP: Immediate Compensation Pruning for Mid‑to‑High Sparsity.”**
 <!-- ([arXiv link ― coming soon](#)) -->
