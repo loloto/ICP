@@ -29,7 +29,7 @@ def set_seed(seed):
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)  # 为所有GPU设置随机种子
+    torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     os.environ['PYTHONHASHSEED'] = str(seed)
@@ -67,19 +67,21 @@ def get_llama(model):
     return model
 
 def adjust_sparsity_weighted(layers_dict, initial_sparsity, reduce_layers, increase_layers, theta):
-    # 初始化每层的稀疏度为统一的初始值
+    # Initialize sparsity for each layer with the initial value
     sparsity_dict = {name: initial_sparsity for name in layers_dict}
 
-    # 计算要从reduce_layers中移除的总剪枝权重数量
+    # Calculate the total number of pruned weights to move from reduce_layers
     total_pruned_weights_to_move = sum(sparsity_dict[name] * layers_dict[name].weight.numel() * theta for name in reduce_layers)
 
-    # 更新reduce_layers中的稀疏度
+    # Update sparsity in reduce_layers
     for name in reduce_layers:
         pruned_weights = sparsity_dict[name] * layers_dict[name].weight.numel() * theta
         sparsity_dict[name] -= pruned_weights / layers_dict[name].weight.numel()
 
-    # 按权重数量比例增加increase_layers中的稀疏度
+    # Increase sparsity in increase_layers proportionally to their weight counts
     total_weights_increase = sum(layers_dict[name].weight.numel() for name in increase_layers)
+    
+    # Update sparsity in increase_layers
     for name in increase_layers:
         pruned_weights_increase = (total_pruned_weights_to_move * layers_dict[name].weight.numel()) / total_weights_increase
         sparsity_dict[name] += pruned_weights_increase / layers_dict[name].weight.numel()
@@ -146,16 +148,16 @@ def llama_sequential(model, dataloader, dev, logger):
     sparsity_list = [args.sparsity] * len(layers)
     
     if args.alpha < 1:
-        # 设置最后一个block的稀疏度上限系数参数
-        sparsity_upper_limit_coefficient = args.alpha  # 系数应小于1
+        # Set the upper-limit coefficient for the sparsity of the last block
+        sparsity_upper_limit_coefficient = args.alpha  # The coefficient should be less than 1
         sparsity_upper_limit = args.sparsity * sparsity_upper_limit_coefficient
 
-        # 检查并调整最后一个block的稀疏度
+        # Check and adjust the sparsity of the last block
         if sparsity_list[-1] > sparsity_upper_limit:
             excess = sparsity_list[-1] - sparsity_upper_limit
             sparsity_list[-1] = sparsity_upper_limit
             
-            # 将超出部分平均分配到前面的元素，除了第一个block
+            # Evenly distribute the excess sparsity to the preceding elements, excluding the first block
             increment = excess / (len(sparsity_list) - 1)
             sparsity_list = [sp + increment for sp in sparsity_list[:-1]] + [sparsity_list[-1]]
 
@@ -200,7 +202,7 @@ def llama_sequential(model, dataloader, dev, logger):
 
         beta = args.beta
         sparsity_dict = adjust_sparsity_weighted(full, args.sparsity, reduce_layers, increase_layers, beta)
-        ## 写到这没写完
+
         if args.true_sequential:
             sequential = [
                 ["self_attn.k_proj", "self_attn.v_proj", "self_attn.q_proj"],
@@ -470,7 +472,7 @@ if __name__ == "__main__":
     
     model = get_llama(args.model)
     model.eval()
-    # model.to(DEV)  # 需删掉，此处仅为测试
+
     dataloader, testloader, _ = get_loaders(
         args.dataset, nsamples=args.nsamples, seed=args.seed, model=args.model, seqlen=model.seqlen
     )
@@ -510,7 +512,7 @@ if __name__ == "__main__":
     num_shot = 0
     results = llama_eval_zero_shot(model, tokenizer, task_list, num_shot, device=DEV)
     
-    # 打印出task_list中每个任务的准确率
+    # Print the accuracy of each task in task_list
     logger.info("********************************")
     logger.info('Zero-shot Evaluation Results (Accuracy)')
 
