@@ -222,7 +222,7 @@ def opt_sequential(model, dataloader, dev, logger):
             if (not (args.minlayer <= i < args.maxlayer and args.prune_only in name)) == (not args.invert):
               continue
             gpts[name] = pruner(subset[name], str(i) + "." + name)
-            # gpts[name] = pruner(subset[name])
+
             if args.wbits < 16:
                 gpts[name].quantizer = Quantizer()
                 gpts[name].quantizer.configure(
@@ -245,7 +245,6 @@ def opt_sequential(model, dataloader, dev, logger):
         
         for h, name in zip(handles, gpts):
             h.remove()
-            # gpts[name].hist_out()
         logger.info('Has added all samples to calculate the Hessian Metric of all found layers in {}-th layer.'.format(i))
         
         for name in gpts:
@@ -491,12 +490,9 @@ if __name__ == '__main__':
 
         overall_sparsity = total_zero / total_params
         logger.info('Overall sparsity: {}'.format(overall_sparsity))
-            # if 'fc2' in n:
-            #     break
         logger.info('End to time. Has used {} seconds.'.format(time.time() - tick))
 
     for dataset in ['wikitext2', 'ptb', 'c4']:
-    # for dataset in ['wikitext2', 'ptb']:
         dataloader, testloader, tokenizer = get_loaders(
             dataset, seed=args.seed, model=args.model, seqlen=model.seqlen
         )

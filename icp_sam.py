@@ -148,14 +148,11 @@ def sam_sequential(model, dataloader, dev, logger):
     std_dataset = FeatureDataset(std_stream_state, device=dev)
     dataloader = DataLoader(std_dataset, batch_size=1, shuffle=False, drop_last=False)
     for idx, std_batch in dataloader:
-    # for j in range(args.nsamples):
         std_stream_state[idx] = layers[0](std_batch)[0].cpu()
     
     model.patch_embed.cpu()
     layers[0].cpu()
     model.pos_embed = nn.Parameter(model.pos_embed.cpu())
-
-    # torch.cuda.empty_cache()
     
     logger.info('Ready to prune.')
     sparsity_list = inter_block_sparsity_rearrange(layers, args.sparsity, args.alpha)
@@ -203,7 +200,6 @@ def sam_sequential(model, dataloader, dev, logger):
         # 2nd step
         for name in gpts:
             logger.info('Pruning {} in {}-th block.'.format(name, i))
-            # sparsity = args.sparsity
             gpts[name].fasterprune(
                 sparsity_dict[name], prunen=args.prunen, prunem=args.prunem, percdamp=args.percdamp, blocksize=args.blocksize
             )
@@ -238,7 +234,7 @@ def sam_sequential(model, dataloader, dev, logger):
             dataloader = DataLoader(dataset, batch_size=1, shuffle=True, drop_last=True)
             scaler = torch.cuda.amp.GradScaler()
             logger.info('Tuning ...')
-            for k in range(args.tune_epoch):  # tune_epoch_num是训练周期总数
+            for k in range(args.tune_epoch):
                 loss_avg = 0
                 tmp = 0
                 nsample = 0
@@ -306,16 +302,13 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     
-    # define the logger path
-    
     seed = 120
     set_seed(seed)
     
     logger_path = os.path.join(args.log_path)
     if not os.path.exists(logger_path):
         os.makedirs(logger_path)
-    
-    # init the logger   
+  
     logger = logger_init(logger_path, args)
     
     logger.info('Log has been initialized.')

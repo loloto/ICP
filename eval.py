@@ -96,9 +96,6 @@ def sam_eval(model,
             avg_metrics *= nsample / (tmp + nsample)
             avg_metrics += tmp / (tmp + nsample) * metrics
             nsample += tmp
-
-        # del img_array, sample
-        # gc.collect()
         
         pbar.set_description(f"PA: {avg_metrics[0].item():.4f}, IoU: {avg_metrics[3].item():.4f}, Precision: {avg_metrics[1].item():.4f}, Recall: {avg_metrics[2].item():.4f}, F1: {avg_metrics[4].item():.4f}")
         
