@@ -1,7 +1,9 @@
-# ICP: Immediate Compensation Pruning for Mid‑to‑High Sparsity
+
+# ICP: Immediate Compensation Pruning for Mid-to-High Sparsity
+[![CVPR 2025 Highlight](https://img.shields.io/badge/CVPR 2025-Highlight-ff69b4?style=flat-square&logo=googleacademic)](#)
 
 Official implementation for the paper **“ICP: Immediate Compensation Pruning for Mid‑to‑High Sparsity.”**
-([arXiv link ― coming soon](#))
+<!-- ([arXiv link ― coming soon](#)) -->
 
 > *Xin Luo, Xueming Fu, Zihang Jiang, S. Kevin Zhou*
 > University of Science and Technology of China, MIRACLE Center & CAS ICT
@@ -138,7 +140,7 @@ Complete SAM‑B/L/H tables are included in the paper.
 
 ---
 
-### 5. Llama‑2‑7B – Zero‑shot Accuracy under Compression. Llama‑2‑7B – Zero‑shot Accuracy under Compression
+### 5. Llama‑2‑7B – Zero‑shot Accuracy under Compression
 
 | Method         | Strategy | BQ        | RTE       | HS        | WG        | ARC‑e     | ARC‑c     | OBQA      | **Mean**  |
 | -------------- | -------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- |
